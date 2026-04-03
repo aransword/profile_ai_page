@@ -1,3 +1,18 @@
 spring:
   application:
     name: spring-ai-profile
+  ai:
+    google:
+      genai:
+        api-key: ${GOOGLE_AI_API_KEY}
+        chat:
+          options:
+            model: gemini-3.1-flash-lite-preview
+
+server:
+  port: 9090
+
+qdrant:
+  host: ${QDRANT_CLUSTER_ENDPOINT}
+  port: 6334
+  api-key: ${QDRANT_API_KEY}

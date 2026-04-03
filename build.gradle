@@ -15,19 +15,29 @@ java {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
 }
 
 dependencies {
+	implementation enforcedPlatform('io.grpc:grpc-bom:1.70.0')
+
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 	// Spring AI 의존성
-	implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
+	implementation 'org.springframework.ai:spring-ai-starter-model-google-genai'
 
 	// PDF 처리 라이브러리
 	implementation 'org.apache.pdfbox:pdfbox:2.0.27'
 
 	// Swagger/OpenAPI 의존성
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+	implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.3.0'
+
+	// dotenv
+	implementation platform('me.paulschwarz:spring-dotenv-bom:5.1.0')
+	developmentOnly 'me.paulschwarz:springboot4-dotenv'
+
+	// Qdrant
+	implementation 'io.qdrant:client:1.8.0'
 
 	// 테스트 의존성
 	testImplementation 'org.springframework.boot:spring-boot-starter-webflux-test'
@@ -38,6 +48,12 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.ai:spring-ai-bom:1.1.4"
+	}
 }
 
 tasks.named('test') {
