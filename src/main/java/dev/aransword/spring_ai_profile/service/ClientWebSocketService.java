@@ -2,7 +2,6 @@ package dev.aransword.spring_ai_profile.service;
 
 import dev.aransword.spring_ai_profile.dto.QueryResponseDto;
 import dev.aransword.spring_ai_profile.repository.QdrantVectorStore;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -16,15 +15,21 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class ClientWebSocketService {
 
-    private final ChatClient.Builder chatClientBuilder;
+    private static final Duration TYPING_DELAY = Duration.ofMillis(30);
+
+    private final ChatClient chatClient;
     private final ChatMemory chatMemory;
     private final QdrantVectorStore qdrantVectorStore;
 
+    public ClientWebSocketService(ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, QdrantVectorStore qdrantVectorStore) {
+        this.chatClient = chatClientBuilder.build();
+        this.chatMemory = chatMemory;
+        this.qdrantVectorStore = qdrantVectorStore;
+    }
+
     public Flux<QueryResponseDto> getChatResponseStream(String userMessage, String chatId) {
-        ChatClient chatClient = chatClientBuilder.build();
 
         // 1. 유사도 검색 수행
         return qdrantVectorStore.searchSimilar(userMessage)
@@ -49,7 +54,7 @@ public class ClientWebSocketService {
                                     .build())
                             .stream()
                             .content()
-                            .delayElements(Duration.ofMillis(30)) // 타자기 효과
+                            .delayElements(TYPING_DELAY) // 타자기 효과
                             .map(content -> new QueryResponseDto(content, false)); // 일반 메시지 DTO 변환
                 })
                 // 3. 마지막에 완료 플래그 전송

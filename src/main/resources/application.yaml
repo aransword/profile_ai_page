@@ -23,6 +23,10 @@ qdrant:
   port: 6334
   api-key: ${QDRANT_API_KEY}
 
+chat:
+  memory:
+    max-messages: 10
+
 logging:
   level:
     dev.aransword.spring_ai_profile: DEBUG

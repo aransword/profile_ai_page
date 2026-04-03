@@ -2,6 +2,7 @@ package dev.aransword.spring_ai_profile.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.aransword.spring_ai_profile.dto.QueryRequestDto;
+import dev.aransword.spring_ai_profile.dto.QueryResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,7 +19,7 @@ import dev.aransword.spring_ai_profile.service.ClientWebSocketService;
 public class ClientWebSocketHandler implements WebSocketHandler {
 
     private final ObjectMapper objectMapper;
-    private final ClientWebSocketService chatService; // 💡 서비스 주입
+    private final ClientWebSocketService chatService;
 
     @Override
     public Mono<Void> handle(WebSocketSession session) {
@@ -30,7 +31,6 @@ public class ClientWebSocketHandler implements WebSocketHandler {
                     try {
                         QueryRequestDto request = objectMapper.readValue(payload, QueryRequestDto.class);
 
-                        // 💡 서비스 호출하여 비즈니스 로직 수행
                         return session.send(
                                 chatService.getChatResponseStream(request.message(), session.getId())
                                         .map(this::toJson)
@@ -38,7 +38,9 @@ public class ClientWebSocketHandler implements WebSocketHandler {
                         );
                     } catch (Exception e) {
                         log.error("메시지 처리 중 에러", e);
-                        return Mono.empty();
+                        // 클라이언트에게 에러 상황을 알려주는 응답 전송
+                        QueryResponseDto errorResponse = new QueryResponseDto("오류가 발생했습니다: " + e.getMessage(), true);
+                        return session.send(Mono.just(session.textMessage(toJson(errorResponse))));
                     }
                 })
                 .then();
@@ -48,7 +50,8 @@ public class ClientWebSocketHandler implements WebSocketHandler {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
-            return "{}";
+            log.error("JSON 직렬화 실패", e);
+            return "{\"content\":\"응답 변환 중 오류가 발생했습니다.\",\"isComplete\":true}";
         }
     }
 }

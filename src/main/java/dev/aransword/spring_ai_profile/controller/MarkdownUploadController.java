@@ -1,6 +1,7 @@
 package dev.aransword.spring_ai_profile.controller;
 
 import dev.aransword.spring_ai_profile.service.RagService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
@@ -10,14 +11,10 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @RestController
 @RequestMapping("/api/rag")
+@RequiredArgsConstructor
 public class MarkdownUploadController {
 
     private final RagService ragService;
-
-    // 생성자 주입 (Spring 4.3 이후 @Autowired 생략 가능)
-    public MarkdownUploadController(RagService ragService) {
-        this.ragService = ragService;
-    }
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Mono<String> uploadMarkdown(@RequestPart("file") FilePart filePart) {
