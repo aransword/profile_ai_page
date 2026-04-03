@@ -1,25 +1,18 @@
-import ChatArea from './components/ChatArea';
-import MessageInput from './components/MessageInput';
-import { useChat } from './hooks/useChat'; // 💡 커스텀 훅 불러오기
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ChatPage from './pages/ChatPage';       // 💡 깔끔하게 분리된 채팅 페이지
+import UploadPage from './pages/UploadPage';   // 💡 문서 업로드 페이지
 
 function App() {
-  // 💡 비즈니스 로직은 훅에게 전담시키고, 필요한 것만 받아옵니다.
-  const { messages, isGenerating, sendMessage } = useChat();
-
   return (
-    <div className="flex h-screen w-full bg-gemini-bg font-sans">
-      <div className="flex-1 flex flex-col relative max-w-5xl mx-auto w-full">
-        <header className="h-16 flex items-center px-4 sm:px-8 text-xl font-semibold text-gray-800">
-          Spring AI Chat
-        </header>
+    <BrowserRouter>
+      <Routes>
+        {/* 루트 경로(/) 접속 시 채팅 페이지 렌더링 */}
+        <Route path="/" element={<ChatPage />} />
         
-        <ChatArea messages={messages} />
-        
-        <div className="bg-gemini-bg pt-2 pb-6">
-          <MessageInput onSendMessage={sendMessage} isGenerating={isGenerating} />
-        </div>
-      </div>
-    </div>
+        {/* /upload 경로 접속 시 문서 업로드 페이지 렌더링 */}
+        <Route path="/upload" element={<UploadPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

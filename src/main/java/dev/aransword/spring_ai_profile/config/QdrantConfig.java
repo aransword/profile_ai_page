@@ -15,10 +15,15 @@ public class QdrantConfig {
     @Value("${qdrant.port}")
     private int port;
 
+    @Value("${qdrant.api-key}")
+    private String apiKey;
+
     @Bean
     public QdrantClient qdrantClient() {
         return new QdrantClient(
-                QdrantGrpcClient.newBuilder(host, port, false).build()
+                QdrantGrpcClient.newBuilder(host, port, true)
+                        .withApiKey(apiKey)
+                        .build()
         );
     }
 }

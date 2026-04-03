@@ -25,6 +25,7 @@ dependencies {
 
 	// Spring AI 의존성
 	implementation 'org.springframework.ai:spring-ai-starter-model-google-genai'
+	implementation 'org.springframework.ai:spring-ai-starter-model-google-genai-embedding'
 
 	// PDF 처리 라이브러리
 	implementation 'org.apache.pdfbox:pdfbox:2.0.27'

@@ -4,10 +4,16 @@ spring:
   ai:
     google:
       genai:
+        project-id: ${GOOGLE_CLOUD_PROJECT_ID}
         api-key: ${GOOGLE_AI_API_KEY}
         chat:
           options:
             model: gemini-3.1-flash-lite-preview
+        embedding:
+          project-id: ${GOOGLE_CLOUD_PROJECT_ID}
+          api-key: ${GOOGLE_AI_API_KEY}
+          options:
+            model: gemini-embedding-001
 
 server:
   port: 9090
@@ -16,3 +22,7 @@ qdrant:
   host: ${QDRANT_CLUSTER_ENDPOINT}
   port: 6334
   api-key: ${QDRANT_API_KEY}
+
+logging:
+  level:
+    dev.aransword.spring_ai_profile: DEBUG
